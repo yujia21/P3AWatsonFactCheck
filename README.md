@@ -1,6 +1,6 @@
 # alchemyapi_python #
 
-A sdk for AlchemyAPI using Python
+A sdk for AlchemyAPI using Python - **_Please note that this legacy AlchemyAPI SDK is no longer supported by IBM. Please use the Watson SDKs https://github.com/watson-developer-cloud?utf8=✓&query=sdk_**
 
 
 ## AlchemyAPI ##
