@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[31]:
+# In[1]:
 
 get_ipython().system('jupyter nbconvert --to script Articles_search.ipynb')
 
@@ -9,14 +9,14 @@ from watson_developer_cloud import AlchemyDataNewsV1
 import json
 
 
-# In[32]:
+# In[37]:
 
 from API_Key import *
 from Keyword_input import extract_keywords
 alchemy_data_news = AlchemyDataNewsV1(api_key = api_key_chosen)
 
 
-# In[33]:
+# In[38]:
 
 def search_from_keywords(keywords):
     
@@ -55,13 +55,14 @@ def search_from_keywords(keywords):
     return keywords_list
 
 
-# In[35]:
+# In[39]:
 
-
+'''
 # Comment if using from Interface, decomment to test.
 k = {'subjects': {'Person': ['Trump'], 'Unsorted Subjects': []}, 'objects': ['president']}
 
 search_from_keywords(k)
+'''
 
 
 # In[ ]:

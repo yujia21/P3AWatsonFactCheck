@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[8]:
+# In[2]:
 
 get_ipython().system('jupyter nbconvert --to script Keyword_input.ipynb')
 
@@ -57,7 +57,7 @@ def extract_keywords(inputfact):
                         objects.append(entity['text'])
             relations.append(relation['type'])
         
-        print('This fact is about: ')
+        print('The subjects are: ')
         for key in subjects.keys() :
             if not (len(subjects[key]) == 0) :
                 print(key+" : ")
