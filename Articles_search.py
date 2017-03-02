@@ -1,12 +1,12 @@
 
 # coding: utf-8
 
-# In[1]:
+# In[9]:
 
 get_ipython().system(u'jupyter nbconvert --to script Articles_search.ipynb')
 
 
-# In[18]:
+# In[6]:
 
 def search_from_keywords_wiki(keywords):
     import wikipedia
@@ -14,8 +14,7 @@ def search_from_keywords_wiki(keywords):
     
     # keywords is a dicationary of lists
     # {relations : [], negations : [], dates : []}
-    # relations is a list [(list subjects, list of objects, relation)]. 
-    # List of subjects can be ['president','Trump'] or just ['member']
+    # relations is a list [[subj, list of objects, relation]]. 
     # negations and dates can be empty. Else : date = [(datetime, original text)]
     
     relations = keywords['relations']
@@ -24,12 +23,12 @@ def search_from_keywords_wiki(keywords):
     
     print("Wikipedia page(s) searched :")
     for relation in relations : 
-        subjs = relation[0]
+        subj = relation[0]
         objs = relation[1]
         rel = relation[2]
         
         # Retrieve contents of last subject item
-        page = wikipedia.page(wikipedia.search(subjs[-1])[0])
+        page = wikipedia.page(wikipedia.search(subj)[0])
         txt = page.content
         print(page.title)
         print('')
@@ -39,14 +38,15 @@ def search_from_keywords_wiki(keywords):
             txt = txt.replace(sign,'.')
         phrases = []
         good_phrases = []
+        text_list = txt.split('.')
         
-        # For each object and alternative subj
-        for word in objs+subjs[:-1]+[i[1] for i in dates] : 
+        # For each object and dates
+        for word in objs+[i[1] for i in dates] : 
             # Add sentences that contain word to phrases. A list for each word
-            phrase1 = [s+ '.' for s in txt.split('.') if word.lower() in s.lower()]
+            phrase1 = [s+ '.' for s in text_list if word.lower() in s.lower()]
             if len(phrase1) !=0 :
                 phrases.append(phrase1)
-                for other_word in objs+subjs[:-1] : 
+                for other_word in objs+[i[1] for i in dates]  : 
                     phrase2 = [s for s in phrases[-1] if (other_word.lower() in s.lower()) and (word != other_word)]
                     if len(phrase2)!=0 : 
                         good_phrases.append(phrase2)
@@ -59,10 +59,27 @@ def search_from_keywords_wiki(keywords):
         # good_phrases has at least two object words, phrases has one
         relation.append(good_phrases)
         relation.append(phrases)
+        relation.append(len(text_list))
         new_relations.append(relation)
     
     keywords['relations'] = new_relations
     return keywords
+
+
+# In[8]:
+
+'''# Comment if using from Interface, decomment to test.
+
+k1 = {'relations': [['Lee Hsien Loong', ['prime minister', 'Singapore', 'Singapore'], 'residesIn']], 'dates': [], 'negations': []}
+k2 = {'relations': [['Ban Ki Moon', ['president', 'UN', 'UN'], 'employedBy']], 'dates': [], 'negations': []}
+k3 = {'relations': [['US', ['war'], 'agentOf'], ['Syria', ['war'], 'affectedBy']], 'dates': [], 'negations': []}
+k4 = {'relations': [['Donald Trump', ['president', 'US', 'US'], 'residesIn']], 'dates': [('20170101T000000', '2017')], 'negations': []}
+
+search_from_keywords_wiki(k1)
+search_from_keywords_wiki(k2)
+search_from_keywords_wiki(k3)
+search_from_keywords_wiki(k4)
+'''
 
 
 # In[38]:
@@ -115,19 +132,5 @@ def search_from_keywords(keywords):
     keywords_list = [extract_keywords(text) for text in text_list]
     
     return keywords_list
-'''
-
-
-# In[19]:
-
-'''
-# Comment if using from Interface, decomment to test.
-k1 = {'relations': [[['president', 'Donald Trump'], ['US'], 'residesIn']], 'negations': [], 'dates': [('20170101T000000', '2017')]}
-k2 = {'relations': [[['prime minister', 'Lee Hsien Loong'], ['Singapore'], 'residesIn']], 'negations': [], 'dates': []}
-k3 = {'relations': [[['president', 'Ban Ki Moon'], ['UN'], 'employedBy']], 'negations': [], 'dates': []}
-
-search_from_keywords_wiki(k1)
-search_from_keywords_wiki(k2)
-search_from_keywords_wiki(k3)
 '''
 

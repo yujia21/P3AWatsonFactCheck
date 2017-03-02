@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[4]:
+# In[19]:
 
 get_ipython().system(u'jupyter nbconvert --to script Keyword_input.ipynb')
 
@@ -12,7 +12,7 @@ from API_Key import *
 alchemy_language = AlchemyLanguageV1(api_key = api_key_chosen)
 
 
-# In[7]:
+# In[14]:
 
 def extract_keywords(inputfact):
     output = []
@@ -34,22 +34,25 @@ def extract_keywords(inputfact):
         
         
         for relation in response['typedRelations']:
+            objs = []
             for argument in relation['arguments']:
+                
                 if argument['part']=='first' : 
-                    subjs = [argument['text']]
+                    subj = argument['text']
                     for entity in argument['entities'] : 
                         ssubj = entity['text']
-                        if not (subjs[0] == ssubj):
-                            subjs.append(ssubj)
+                        if not (subj == ssubj):
+                            objs.append(subj)
+                            subj = ssubj
                             
                 if argument['part']=='second' :
-                    objs = [argument['text']]
+                    objs.append(argument['text'])
                     for entity in argument['entities'] : 
                         sobj = entity['text']
                         if not (objs[0] == sobj):
                             objs.append(sobj)
             
-            output.append([subjs, objs, relation['type']])
+            output.append([subj, objs, relation['type']])
         if not (len(response['dates'])==0) :
             for date in response['dates']:
                 dates.append((date['date'], date['text']))
@@ -70,33 +73,17 @@ def extract_keywords(inputfact):
     return final
 
 
-# In[9]:
+# In[18]:
 
 '''
-# Comment if using from Interface, decomment to test.
-while True: 
-    print ("Enter a fact:")
-    inputfact = input()
-    keywords = extract_keywords(inputfact)
-    
-    # Lee Hsien Loong is the prime minister of Singapore
-    # The UN president is Ban Ki Moon
-    # The US is at war with Syria
-    # Laos became a member of ASEAN in 2016
+k1 ='Lee Hsien Loong is the prime minister of Singapore'
+k2 = 'The UN president is Ban Ki Moon'
+k3 = 'The US is at war with Syria'
+k4 = 'Donald Trump became president of the US in 2017'
 
-The UN president is Ban Ki Moon
-{'relations': [[['president', 'Ban Ki Moon'], ['UN'], 'employedBy']], 'negations': [], 'dates': []}
-Enter a fact:
-The US is at war with Syria
-{'relations': [[['US'], ['war'], 'agentOf'], [['Syria'], ['war'], 'affectedBy']], 'negations': [], 'dates': []}
-Enter a fact:
-Laos became a member of ASEAN in 2016
-{'relations': [[['member'], ['ASEAN'], 'employedBy']], 'negations': [], 'dates': [('20160101T000000', '2016')]}
-Enter a fact:
-Lee Hsien Loong is the prime minister of Singapore
-{'relations': [[['prime minister', 'Lee Hsien Loong'], ['Singapore'], 'residesIn']], 'negations': [], 'dates': []}
-Enter a fact:
-Donald Trump became president of the US in 2017
-{'relations': [[['president', 'Donald Trump'], ['US'], 'residesIn']], 'negations': [], 'dates': [('20170101T000000', '2017')]}
+print(extract_keywords(k1))
+print(extract_keywords(k2))
+print(extract_keywords(k3))
+print(extract_keywords(k4))
 '''
 
