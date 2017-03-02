@@ -3,7 +3,7 @@
 
 # In[1]:
 
-get_ipython().system('jupyter nbconvert --to script Articles_search.ipynb')
+get_ipython().system(u'jupyter nbconvert --to script Articles_search.ipynb')
 
 from watson_developer_cloud import AlchemyDataNewsV1
 import json
