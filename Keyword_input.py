@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[3]:
+# In[4]:
 
 get_ipython().system(u'jupyter nbconvert --to script Keyword_input.ipynb')
 
@@ -12,7 +12,7 @@ from API_Key import *
 alchemy_language = AlchemyLanguageV1(api_key = api_key_chosen)
 
 
-# In[22]:
+# In[7]:
 
 def extract_keywords(inputfact):
     output = []
@@ -66,10 +66,11 @@ def extract_keywords(inputfact):
     final['relations'] = output
     final['negations'] = n_list
     final['dates'] = dates
+    print(final)
     return final
 
 
-# In[23]:
+# In[9]:
 
 '''
 # Comment if using from Interface, decomment to test.
@@ -84,18 +85,18 @@ while True:
     # Laos became a member of ASEAN in 2016
 
 The UN president is Ban Ki Moon
-[(['president', 'Ban Ki Moon'], ['UN'], 'employedBy')]
+{'relations': [[['president', 'Ban Ki Moon'], ['UN'], 'employedBy']], 'negations': [], 'dates': []}
 Enter a fact:
 The US is at war with Syria
-[(['US'], ['war'], 'agentOf'), (['Syria'], ['war'], 'affectedBy')]
+{'relations': [[['US'], ['war'], 'agentOf'], [['Syria'], ['war'], 'affectedBy']], 'negations': [], 'dates': []}
 Enter a fact:
 Laos became a member of ASEAN in 2016
-[(['member'], ['ASEAN'], 'employedBy')]
+{'relations': [[['member'], ['ASEAN'], 'employedBy']], 'negations': [], 'dates': [('20160101T000000', '2016')]}
 Enter a fact:
 Lee Hsien Loong is the prime minister of Singapore
-[[(['prime minister', 'Lee Hsien Loong'], ['Singapore'], 'residesIn')], ['not'], []]
+{'relations': [[['prime minister', 'Lee Hsien Loong'], ['Singapore'], 'residesIn']], 'negations': [], 'dates': []}
 Enter a fact:
 Donald Trump became president of the US in 2017
-[[(['president', 'Donald Trump'], ['US'], 'residesIn')], [], [('20170101T000000', '2017')]]
+{'relations': [[['president', 'Donald Trump'], ['US'], 'residesIn']], 'negations': [], 'dates': [('20170101T000000', '2017')]}
 '''
 
