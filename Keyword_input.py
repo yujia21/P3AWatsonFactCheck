@@ -1,9 +1,9 @@
 
 # coding: utf-8
 
-# In[2]:
+# In[3]:
 
-get_ipython().system('jupyter nbconvert --to script Keyword_input.ipynb')
+get_ipython().system(u'jupyter nbconvert --to script Keyword_input.ipynb')
 
 from watson_developer_cloud import AlchemyLanguageV1
 import json
@@ -12,10 +12,11 @@ from API_Key import *
 alchemy_language = AlchemyLanguageV1(api_key = api_key_chosen)
 
 
-# In[4]:
+# In[22]:
 
 def extract_keywords(inputfact):
-    output=[]
+    output = []
+    dates = []
         
     import re
     n_list=[]
@@ -28,32 +29,47 @@ def extract_keywords(inputfact):
 
     
     #keywords
-    response = alchemy_language.combined(text=inputfact,extract='typed-rels',max_items=100)
+    response = alchemy_language.combined(text=inputfact,extract='typed-rels, dates',max_items=100)
     if response['status'] == 'OK' : 
         
         
         for relation in response['typedRelations']:
             for argument in relation['arguments']:
                 if argument['part']=='first' : 
-                    this_subject = argument['text']
-
+                    subjs = [argument['text']]
+                    for entity in argument['entities'] : 
+                        ssubj = entity['text']
+                        if not (subjs[0] == ssubj):
+                            subjs.append(ssubj)
+                            
                 if argument['part']=='second' :
-                    this_object = argument['text']
-            output.append((this_subject,this_object, relation['type']))
+                    objs = [argument['text']]
+                    for entity in argument['entities'] : 
+                        sobj = entity['text']
+                        if not (objs[0] == sobj):
+                            objs.append(sobj)
+            
+            output.append([subjs, objs, relation['type']])
+        if not (len(response['dates'])==0) :
+            for date in response['dates']:
+                dates.append((date['date'], date['text']))
         
     else:
         print('Error in keyword extaction call: ', response['statusInfo'])
     
     # Prepositions ? 
-
+    
     # Semantic query expansion
     # dbpedia : Quepy
     # Scoping problem - Political issues. Sample queries
-    print(output)   
-    return output
+    final = {}
+    final['relations'] = output
+    final['negations'] = n_list
+    final['dates'] = dates
+    return final
 
 
-# In[7]:
+# In[23]:
 
 '''
 # Comment if using from Interface, decomment to test.
@@ -67,5 +83,19 @@ while True:
     # The US is at war with Syria
     # Laos became a member of ASEAN in 2016
 
+The UN president is Ban Ki Moon
+[(['president', 'Ban Ki Moon'], ['UN'], 'employedBy')]
+Enter a fact:
+The US is at war with Syria
+[(['US'], ['war'], 'agentOf'), (['Syria'], ['war'], 'affectedBy')]
+Enter a fact:
+Laos became a member of ASEAN in 2016
+[(['member'], ['ASEAN'], 'employedBy')]
+Enter a fact:
+Lee Hsien Loong is the prime minister of Singapore
+[[(['prime minister', 'Lee Hsien Loong'], ['Singapore'], 'residesIn')], ['not'], []]
+Enter a fact:
+Donald Trump became president of the US in 2017
+[[(['president', 'Donald Trump'], ['US'], 'residesIn')], [], [('20170101T000000', '2017')]]
 '''
 
