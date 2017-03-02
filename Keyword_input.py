@@ -66,7 +66,7 @@ def extract_keywords(inputfact):
     final['relations'] = output
     final['negations'] = n_list
     final['dates'] = dates
-    print(final)
+
     return final
 
 
