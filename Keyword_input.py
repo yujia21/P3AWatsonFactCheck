@@ -3,7 +3,7 @@
 
 # In[19]:
 
-get_ipython().system(u'jupyter nbconvert --to script Keyword_input.ipynb')
+get_ipython().system('jupyter nbconvert --to script Keyword_input.ipynb')
 
 from watson_developer_cloud import AlchemyLanguageV1
 import json
