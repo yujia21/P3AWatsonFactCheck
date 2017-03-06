@@ -1,9 +1,9 @@
 
 # coding: utf-8
 
-# In[19]:
+# In[3]:
 
-get_ipython().system('jupyter nbconvert --to script Keyword_input.ipynb')
+get_ipython().system(u'jupyter nbconvert --to script Keyword_input.ipynb')
 
 from watson_developer_cloud import AlchemyLanguageV1
 import json
@@ -12,7 +12,7 @@ from API_Key import *
 alchemy_language = AlchemyLanguageV1(api_key = api_key_chosen)
 
 
-# In[14]:
+# In[4]:
 
 def extract_keywords(inputfact):
     output = []
@@ -52,7 +52,7 @@ def extract_keywords(inputfact):
                         if not (objs[0] == sobj):
                             objs.append(sobj)
             
-            output.append([subj, objs, relation['type']])
+            output.append([subj, list(set(objs)), relation['type']])
         if not (len(response['dates'])==0) :
             for date in response['dates']:
                 dates.append((date['date'], date['text']))
@@ -73,9 +73,8 @@ def extract_keywords(inputfact):
     return final
 
 
-# In[18]:
+# In[5]:
 
-'''
 k1 ='Lee Hsien Loong is the prime minister of Singapore'
 k2 = 'The UN president is Ban Ki Moon'
 k3 = 'The US is at war with Syria'
@@ -85,5 +84,4 @@ print(extract_keywords(k1))
 print(extract_keywords(k2))
 print(extract_keywords(k3))
 print(extract_keywords(k4))
-'''
 

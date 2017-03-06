@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[9]:
+# In[7]:
 
 get_ipython().system(u'jupyter nbconvert --to script Articles_search.ipynb')
 
@@ -66,19 +66,71 @@ def search_from_keywords_wiki(keywords):
     return keywords
 
 
-# In[8]:
+# In[6]:
 
-'''# Comment if using from Interface, decomment to test.
+def search_from_keywords_dbpedia(keywords) :
+    from SPARQLWrapper import SPARQLWrapper, JSON
+    import wikipedia
+    
+    relations = keywords['relations']
+    dates = keywords['dates']
+    new_relations = []
+    
+    for relation in relations : 
+        subj = relation[0]
+        objs = relation[1]
+        rel = relation[2]
+        
+        page = wikipedia.page(wikipedia.search(subj)[0])
+        title = page.title.replace(' ','_')
+        
+        #dict_terms = {'residesIn' : ['''dbo:country''']}
 
-k1 = {'relations': [['Lee Hsien Loong', ['prime minister', 'Singapore', 'Singapore'], 'residesIn']], 'dates': [], 'negations': []}
-k2 = {'relations': [['Ban Ki Moon', ['president', 'UN', 'UN'], 'employedBy']], 'dates': [], 'negations': []}
-k3 = {'relations': [['US', ['war'], 'agentOf'], ['Syria', ['war'], 'affectedBy']], 'dates': [], 'negations': []}
-k4 = {'relations': [['Donald Trump', ['president', 'US', 'US'], 'residesIn']], 'dates': [('20170101T000000', '2017')], 'negations': []}
+        query_string = """
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+            SELECT ?abstract
+            WHERE { <http://dbpedia.org/resource/%s> dbo:abstract ?abstract
+            FILTER langMatches(lang(?abstract),'en')
+            }
+        """
 
-search_from_keywords_wiki(k1)
-search_from_keywords_wiki(k2)
-search_from_keywords_wiki(k3)
-search_from_keywords_wiki(k4)
+        sparql = SPARQLWrapper("http://dbpedia.org/sparql")
+        sparql.setReturnFormat(JSON)
+
+        sparql.setQuery(query_string % title)
+
+        results = sparql.query().convert()
+        if (len(results) != 0) : 
+            abstract = results['results']['bindings'][0]['abstract']['value']
+        else : 
+            abstract = ''
+        
+        values = [obj.lower() in abstract.lower() for obj in objs+[i[1] for i in dates]]
+        relation.append(values)
+        relation.append(abstract)
+        new_relations.append(relation)
+
+    keywords['relations'] = new_relations
+    return keywords
+
+
+# In[1]:
+
+'''
+# Comment if using from Interface, decomment to test.
+
+k1 = {'relations': [['Lee Hsien Loong', ['prime minister', 'Singapore'], 'residesIn']], 'dates': [], 'negations': []}
+k2 = {'relations': [['Ban Ki-moon', ['president', 'UN'], 'employedBy']], 'dates': [], 'negations': []}
+k3 = {'relations': [['Donald Trump', ['president', 'US'], 'residesIn']], 'dates': [('20170101T000000', '2017')], 'negations': []}
+
+#search_from_keywords_wiki(k1)
+#search_from_keywords_wiki(k2)
+#search_from_keywords_wiki(k3)
+
+
+print(search_from_keywords_dbpedia(k1))
+print(search_from_keywords_dbpedia(k2))
+print(search_from_keywords_dbpedia(k3))
 '''
 
 
