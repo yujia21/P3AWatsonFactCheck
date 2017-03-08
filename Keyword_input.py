@@ -1,10 +1,3 @@
-
-# coding: utf-8
-
-# In[9]:
-
-get_ipython().system('jupyter nbconvert --to script Keyword_input.ipynb')
-
 from watson_developer_cloud import AlchemyLanguageV1
 import json
 
@@ -71,17 +64,3 @@ def extract_keywords(inputfact):
     final['dates'] = dates
 
     return final
-
-
-# In[8]:
-
-'''
-k1 ='Lee Hsien Loong is the prime minister of Singapore'
-k2 = 'The UN president is Ban Ki Moon'
-k3 = 'Donald Trump became president of the US in 2017'
-
-print(extract_keywords(k1))
-print(extract_keywords(k2))
-print(extract_keywords(k3))
-'''
-
