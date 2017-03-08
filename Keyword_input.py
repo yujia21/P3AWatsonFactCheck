@@ -1,9 +1,9 @@
 
 # coding: utf-8
 
-# In[3]:
+# In[9]:
 
-get_ipython().system(u'jupyter nbconvert --to script Keyword_input.ipynb')
+get_ipython().system('jupyter nbconvert --to script Keyword_input.ipynb')
 
 from watson_developer_cloud import AlchemyLanguageV1
 import json
@@ -12,7 +12,7 @@ from API_Key import *
 alchemy_language = AlchemyLanguageV1(api_key = api_key_chosen)
 
 
-# In[4]:
+# In[5]:
 
 def extract_keywords(inputfact):
     output = []
@@ -42,17 +42,17 @@ def extract_keywords(inputfact):
                     for entity in argument['entities'] : 
                         ssubj = entity['text']
                         if not (subj == ssubj):
-                            objs.append(subj)
+                            objs.append([subj,''])
                             subj = ssubj
                             
                 if argument['part']=='second' :
                     objs.append(argument['text'])
                     for entity in argument['entities'] : 
-                        sobj = entity['text']
-                        if not (objs[0] == sobj):
+                        sobj = [entity['text'], entity['type']]
+                        if not (sobj in objs):
                             objs.append(sobj)
             
-            output.append([subj, list(set(objs)), relation['type']])
+            output.append([subj, objs, relation['type']])
         if not (len(response['dates'])==0) :
             for date in response['dates']:
                 dates.append((date['date'], date['text']))
@@ -73,15 +73,15 @@ def extract_keywords(inputfact):
     return final
 
 
-# In[5]:
+# In[8]:
 
+'''
 k1 ='Lee Hsien Loong is the prime minister of Singapore'
 k2 = 'The UN president is Ban Ki Moon'
-k3 = 'The US is at war with Syria'
-k4 = 'Donald Trump became president of the US in 2017'
+k3 = 'Donald Trump became president of the US in 2017'
 
 print(extract_keywords(k1))
 print(extract_keywords(k2))
 print(extract_keywords(k3))
-print(extract_keywords(k4))
+'''
 
