@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[4]:
+# In[6]:
 
 def search_from_keywords_dbpedia(keywords) :
     from SPARQLWrapper import SPARQLWrapper, JSON
@@ -42,7 +42,8 @@ def search_from_keywords_dbpedia(keywords) :
                 abstract = results['results']['bindings'][0]['abstract']['value']
         
         # add True or False for whether each obj and date is in abstract
-        values = [obj[0].lower() in abstract.lower() for obj in objs+[i[1] for i in dates]]
+        values = [obj[0].lower() in abstract.lower() for obj in objs]
+        values = values + [str(i[1]).lower() in abstract.lower() for i in dates]
         # add True False list
         relation.append(values)
         # add abstract
@@ -119,7 +120,7 @@ def search_from_keywords_dbpedia(keywords) :
     return keywords
 
 
-# In[5]:
+# In[7]:
 
 '''
 # Comment if using from Interface, decomment to test.
